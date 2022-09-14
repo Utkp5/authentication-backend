@@ -24,15 +24,15 @@ router.get("/",function(req,res) {
 
 
 
-var salt =  bcrypt.genSaltSync(10);
+var salt = bcrypt.genSaltSync(10);
 
 //register
 router.post("/Signup", async(req,res) => {
     try {
         
-        var hash = bcrypt.hashSync(req.body.password);
-        var hash1 = bcrypt.hashSync(req.body.repeatPassword);
         const {userName,password,repeatPassword,userEmail} = req.body;
+        var hash =   bcrypt.hashSync(req.body.password);
+        var sechash =  bcrypt.hashSync(req.body.repeatPassword);
         const oldUser = await User.findOne({ userEmail });
 
         if(!(userName && password && repeatPassword && userEmail)){
@@ -51,7 +51,7 @@ router.post("/Signup", async(req,res) => {
             await User.create({
                 userName : req.body.firstName,
                 password : hash,
-                repeatPassword : hash1,
+                repeatPassword : sechash,
                 userEmail : req.body.userEmail,
             });
         }
