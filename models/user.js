@@ -16,11 +16,11 @@ const userSchema = new mongoose.Schema(
         },
         userEmail : {
             type : String,
-            require : true,
+            require : true, 
         },
     },
     {
-        timestamp: { type: Date, default: Date.now},
+        timestamps: true,
     }
 );
 
