@@ -10,6 +10,8 @@ const authFile = require("../service/authentication");
 //     return res.send("hey I'm utkarsh");
 // });
 
+const JWT_SECRET = "hvdvay6ert72839289()aiyg8t87qt72393293883uhefiuh78ttq3ifi78272jbkj?[]]pou89ywe";
+
 
 //check
 router.get("/",function(req,res) {
@@ -87,9 +89,34 @@ router.post("/Login", async(req,res) => {
     }
 })
 
+//forgot password
+router.post("/Frgtpassword", async (req, res) => {
+    const { userEmail } = req.body;
+    try {
+      const oldUser = await User.findOne({userEmail});
+      if (!oldUser) {
+        return res.status(401).json({ status: "User Not Exists!!" }); // here we can use it .send also 
+      }
+      const secret = JWT_SECRET + oldUser.password;
+      const token = authFile.getToken({ userEmail: oldUser.userEmail, userid : oldUser._id}, secret, {
+        expiresIn: "5m",
+      });
+      const link = `http://localhost:5000/resetpassword/${oldUser._id}/${token}`;
+      console.log(link);
+      return res.send("sent");
+    } catch (error) {
+        console.log(error);
+    }
+  });
 
 
 
+  router.get("/resetpassword/:id/:token", async (req, res) => {
+    const { id, token } = req.params;
+    console.log(req.params);
+    return res.send("Reset Password done");
+
+  });
 
 
 
