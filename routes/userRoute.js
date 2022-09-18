@@ -4,6 +4,9 @@ const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const authFile = require("../service/authentication");
 const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
+const dotenv = require('dotenv');
+dotenv.config();
 
 
 
@@ -101,6 +104,30 @@ router.post("/Frgtpassword", async (req, res) => {
       const secret = JWT_SECRET + oldUser.password;
       const token = authFile.getToken({ userEmail: oldUser.userEmail, userid : oldUser._id})
       const link = `http://localhost:5000/resetpassword/${oldUser._id}/${token}`;
+      var transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.GMAIL,
+          pass: process.env.PASSWORD,
+        },
+      });
+  
+      var mailOptions = {
+        from: process.env.GMAIL,
+        to: process.env.TO,
+        subject: "Password Reset",
+        html: `<h2>Do not reply on this email as this email is bot</h2><h3>Click on the below link to Reset Your Password<br>${link}`,
+        // text: link,
+
+      };
+  
+      transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log("Email sent: " + info.response);
+        }
+      });
       console.log(link);
       return res.send("sent");
     } catch (error) {
