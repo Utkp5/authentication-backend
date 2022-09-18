@@ -3,6 +3,7 @@ const router = express.Router();
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const authFile = require("../service/authentication");
+const jwt = require("jsonwebtoken");
 
 
 
@@ -98,9 +99,7 @@ router.post("/Frgtpassword", async (req, res) => {
         return res.status(401).json({ status: "User Not Exists!!" }); // here we can use it .send also 
       }
       const secret = JWT_SECRET + oldUser.password;
-      const token = authFile.getToken({ userEmail: oldUser.userEmail, userid : oldUser._id}, secret, {
-        expiresIn: "5m",
-      });
+      const token = authFile.getToken({ userEmail: oldUser.userEmail, userid : oldUser._id})
       const link = `http://localhost:5000/resetpassword/${oldUser._id}/${token}`;
       console.log(link);
       return res.send("sent");
@@ -113,8 +112,20 @@ router.post("/Frgtpassword", async (req, res) => {
 
   router.get("/resetpassword/:id/:token", async (req, res) => {
     const { id, token } = req.params;
-    console.log(req.params);
-    return res.send("Reset Password done");
+     console.log(req.params);
+     const oldUser = await User.findOne({ _id: id });
+     if (!oldUser) {
+       return res.json({ status: "User Not Exists!" });
+     }
+     const secret = JWT_SECRET + oldUser.password;
+     try {
+       const verify = authFile.getToken.verify(token, secret);
+        //res.render("index", { email: verify.email, status: "Not Verified" });
+        return res.send("verified")
+     } catch (error) {
+       console.log(error);
+       res.send("Not Verified");
+     }
 
   });
 
