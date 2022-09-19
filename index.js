@@ -13,6 +13,11 @@ const dbConfig = require("./Service/dbConfig");
 dbConfig();
 
 
+// view engine
+app.set("view engine", "ejs");
+app.use(express.urlencoded({ extended: false }));
+
+
 
 app.use(cors());
 app.use(logger("dev"));

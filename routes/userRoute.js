@@ -7,8 +7,7 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const dotenv = require('dotenv');
 dotenv.config();
-app.set("view engine", "ejs");
-app.use(express.urlencoded({ extended: false }));
+
 
 
 // router.get("/msg",function(req,res) {
@@ -106,7 +105,7 @@ router.post("/Frgtpassword", async (req, res) => {
       const token = authFile.getToken({ userEmail: oldUser.userEmail, userid : oldUser.id},secret, {
             expiresIn: "5m",
       });
-      const link = `http://localhost:5000/resetpassword/${oldUser.id}/${token}`;
+      const link = `http://localhost:5000/api/resetpassword/${oldUser.id}/${token}`;
       var transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
@@ -143,14 +142,14 @@ router.post("/Frgtpassword", async (req, res) => {
   router.get("/resetpassword/:id/:token", async (req, res) => {
     const { id, token } = req.params;
      console.log(req.params);
-     const oldUser = await User.findOne(id);
+     const oldUser = await User.findOne({_id : id});
      if (!oldUser) {
        return res.json({ status: "User Not Exists!" });
      }
      const secret = JWT_SECRET + oldUser.password;
      try {
-       const verify = authFile.getToken.verify(token, secret);
-        //res.render("index", { email: verify.email, status: "Not Verified" });
+       const verify = jwt.verify(token, secret);
+        // res.render("index.ejs", { email: verify.email, status: "utkarsh" });
         return res.send("verified")
      } catch (error) {
        console.log(error);
