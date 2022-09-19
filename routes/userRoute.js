@@ -102,10 +102,10 @@ router.post("/Frgtpassword", async (req, res) => {
         return res.status(401).json({ status: "User Not Exists!!" }); // here we can use it .send also 
       }
       const secret = JWT_SECRET + oldUser.password;
-      const token = authFile.getToken({ userEmail: oldUser.userEmail, userid : oldUser.id},secret, {
+      const token = authFile.getToken({ userEmail: oldUser.userEmail, userid : oldUser._id},secret, {
             expiresIn: "5m",
       });
-      const link = `http://localhost:5000/api/resetpassword/${oldUser.id}/${token}`;
+      const link = `http://localhost:5000/api/resetpassword/${oldUser._id}/${token}`;
       var transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
@@ -148,8 +148,8 @@ router.post("/Frgtpassword", async (req, res) => {
      }
      const secret = JWT_SECRET + oldUser.password;
      try {
-       const verify = jwt.verify(token, secret);
-        // res.render("index.ejs", { email: verify.email, status: "utkarsh" });
+       const decoded = jwt.verify(token, secret);
+        res.render("index.ejs", { userEmail : decoded.userEmail, status: "utkarsh" });
         return res.send("verified")
      } catch (error) {
        console.log(error);
@@ -170,8 +170,8 @@ router.post("/Frgtpassword", async (req, res) => {
     }
     const secret = JWT_SECRET + oldUser.password;
     try {
-      const verify = jwt.verify(token, secret);
-      const encryptedPassword = await bcrypt.hash(password, 10);
+      const decoded = jwt.verify(token, secret);
+      const encryptedPassword = await bcrypt.hash(password, salt);
       await User.updateOne(
         {
           _id: id,
@@ -184,7 +184,7 @@ router.post("/Frgtpassword", async (req, res) => {
       );
       
   
-      res.render("index", { email: verify.email, status: "verified" });
+      res.render("index.ejs", { userEmail: decoded.userEmail, status: "verified" });
     } catch (error) {
       console.log(error);
       res.json({ status: "Something Went Wrong" });
