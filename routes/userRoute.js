@@ -102,12 +102,14 @@ router.post("/Frgtpassword", async (req, res) => {
         return res.status(401).json({ status: "User Not Exists!!" }); // here we can use it .send also 
       }
       const secret = JWT_SECRET + oldUser.password;
-      const token = authFile.getToken({ userEmail: oldUser.userEmail, userid : oldUser._id},secret, {
+      const token = jwt.sign({ userEmail: oldUser.userEmail, userid : oldUser._id},secret, {
             expiresIn: "5m",
       });
       const link = `http://localhost:5000/api/resetpassword/${oldUser._id}/${token}`;
       var transporter = nodemailer.createTransport({
-        service: "gmail",
+        service: 'gmail',
+        port: 465,
+        secure: true,
         auth: {
           user: process.env.GMAIL,
           pass: process.env.PASSWORD,
@@ -142,6 +144,7 @@ router.post("/Frgtpassword", async (req, res) => {
   router.get("/resetpassword/:id/:token", async (req, res) => {
     const { id, token } = req.params;
      console.log(req.params);
+     const { userEmail} = req.body;
      const oldUser = await User.findOne({_id : id});
      if (!oldUser) {
        return res.json({ status: "User Not Exists!" });
@@ -149,7 +152,7 @@ router.post("/Frgtpassword", async (req, res) => {
      const secret = JWT_SECRET + oldUser.password;
      try {
        const decoded = jwt.verify(token, secret);
-        res.render("index.ejs", { userEmail : decoded.userEmail, status: "utkarsh" });
+        res.render("index.ejs", { userEmail : userEmail, status: "utkarsh" });
         return res.send("verified")
      } catch (error) {
        console.log(error);
