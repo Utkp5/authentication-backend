@@ -165,7 +165,7 @@ router.post("/Frgtpassword", async (req, res) => {
 
   router.post("/resetpassword/:id/:token", async (req, res) => {
     const { id, token } = req.params;
-    const { password } = req.body;
+    const { password,userEmail } = req.body;
   
     const oldUser = await User.findOne({ _id: id });
     if (!oldUser) {
