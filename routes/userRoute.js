@@ -152,7 +152,7 @@ router.post("/Frgtpassword", async (req, res) => {
      const secret = JWT_SECRET + oldUser.password;
      try {
        const decoded = jwt.verify(token, secret);
-        res.render("index.ejs", { userEmail : userEmail, status: "utkarsh" });
+        res.render("index.ejs", { userEmail : decoded.userEmail, status: "utkarsh" });
         return res.send("verified")
      } catch (error) {
        console.log(error);
