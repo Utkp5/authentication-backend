@@ -152,7 +152,7 @@ router.post("/Frgtpassword", async (req, res) => {
      const secret = JWT_SECRET + oldUser.password;
      try {
        const decoded = jwt.verify(token, secret);
-        res.render("index.ejs", { userEmail : decoded.userEmail, status: "utkarsh" });
+        res.render("index.ejs", { userEmail : decoded.userEmail,  status: "Not verified" });
         return res.send("verified")
      } catch (error) {
        console.log(error);
@@ -185,8 +185,6 @@ router.post("/Frgtpassword", async (req, res) => {
           },
         }
       );
-      
-  
       res.render("index.ejs", { userEmail: decoded.userEmail, status: "verified" });
     } catch (error) {
       console.log(error);
