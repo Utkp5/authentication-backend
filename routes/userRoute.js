@@ -120,7 +120,7 @@ router.post("/Frgtpassword", async (req, res) => {
         subject: "Password Reset",
         html: `<h2>Do not reply on this email as this email is bot</h2>
         <h3>Click on the below button to Reset Your Password</h3>
-        <a href=${link}><Button style="background-color:yellow;color:black;padding:8px 8px;border-radius:8px;">Reset Password</Button></a><br>
+        <a href=${link}><Button style="background-color:yellow;color:brown;padding:8px 8px;border-radius:8px;">Reset Password</Button></a><br>
         <h3>Or Click on the below link to Reset Your Password</h3>
         <p>${link}</p>`,
         // text: link,
