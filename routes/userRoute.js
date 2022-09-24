@@ -108,8 +108,6 @@ router.post("/Frgtpassword", async (req, res) => {
       const link = `http://localhost:5000/api/resetpassword/${oldUser._id}/${token}`;
       var transporter = nodemailer.createTransport({
         service: 'gmail',
-        port: 465,
-        secure: true,
         auth: {
           user: process.env.GMAIL,
           pass: process.env.PASSWORD,
@@ -141,7 +139,7 @@ router.post("/Frgtpassword", async (req, res) => {
 
 
 
-  router.get("/resetpassword/:id/:token", async (req, res) => {
+  router.get("/resetpassword/:id/:token", async (req, res, next) => {
     const { id, token } = req.params;
      console.log(req.params);
      const { userEmail} = req.body;
@@ -153,10 +151,10 @@ router.post("/Frgtpassword", async (req, res) => {
      try {
        const decoded = jwt.verify(token, secret);
         res.render("index.ejs", { userEmail : decoded.userEmail,  status: "Not verified" });
-        return res.send("verified")
+        // return res.json({status: "verified"})
      } catch (error) {
        console.log(error);
-       res.send("Not Verified");
+      //  return res.json({status: "Not Verified"})
      }
 
   });
